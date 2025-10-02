@@ -158,5 +158,41 @@ export const apiKeysService = {
       console.error('Error incrementing usage:', error)
       throw error
     }
+  },
+
+  // Validate a specific API key
+  async validateKey(keyValue) {
+    try {
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('*')
+        .eq('key_value', keyValue)
+        .single()
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No rows returned - key not found
+          return null
+        }
+        throw error
+      }
+
+      // Transform data to match the expected format
+      return {
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        type: data.type,
+        usage: data.usage_count,
+        key: getMaskedKey(data.key_value),
+        fullKey: data.key_value,
+        createdAt: data.created_at.split('T')[0],
+        lastUsed: data.last_used_at ? data.last_used_at.split('T')[0] : 'Never',
+        permissions: data.permissions || []
+      }
+    } catch (error) {
+      console.error('Error validating API key:', error)
+      throw error
+    }
   }
 }

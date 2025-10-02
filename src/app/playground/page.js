@@ -31,22 +31,19 @@ export default function PlaygroundPage() {
 
   const validateApiKey = async (keyToValidate) => {
     try {
-      // Get all API keys from the database
-      const allKeys = await apiKeysService.getAll();
+      // Query Supabase directly for the specific API key
+      const keyInfo = await apiKeysService.validateKey(keyToValidate);
       
-      // Check if the provided key matches any existing key
-      const matchingKey = allKeys.find(key => key.fullKey === keyToValidate);
-      
-      if (matchingKey) {
+      if (keyInfo) {
         return {
           isValid: true,
           keyInfo: {
-            name: matchingKey.name,
-            type: matchingKey.type,
-            usage: matchingKey.usage,
-            permissions: matchingKey.permissions,
-            createdAt: matchingKey.createdAt,
-            lastUsed: matchingKey.lastUsed
+            name: keyInfo.name,
+            type: keyInfo.type,
+            usage: keyInfo.usage,
+            permissions: keyInfo.permissions,
+            createdAt: keyInfo.createdAt,
+            lastUsed: keyInfo.lastUsed
           }
         };
       } else {
@@ -136,7 +133,7 @@ export default function PlaygroundPage() {
                     id="apiKey"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm placeholder-gray-500 text-gray-900"
                     placeholder="Enter your API key (e.g., tvly-dev-...)"
                     disabled={isValidating}
                   />
@@ -197,16 +194,16 @@ export default function PlaygroundPage() {
                       <h4 className="font-medium text-gray-900 mb-2">Key Information</h4>
                       <dl className="space-y-2 text-sm">
                         <div>
-                          <dt className="text-gray-600">Name:</dt>
-                          <dd className="font-medium">{validationResult.keyInfo.name}</dd>
+                          <dt className="text-blue-600 font-medium">Name:</dt>
+                          <dd className="font-medium text-gray-900">{validationResult.keyInfo.name}</dd>
                         </div>
                         <div>
-                          <dt className="text-gray-600">Type:</dt>
-                          <dd className="font-medium capitalize">{validationResult.keyInfo.type}</dd>
+                          <dt className="text-blue-600 font-medium">Type:</dt>
+                          <dd className="font-medium text-gray-900 capitalize">{validationResult.keyInfo.type}</dd>
                         </div>
                         <div>
-                          <dt className="text-gray-600">Usage Count:</dt>
-                          <dd className="font-medium">{validationResult.keyInfo.usage}</dd>
+                          <dt className="text-blue-600 font-medium">Usage Count:</dt>
+                          <dd className="font-medium text-gray-900">{validationResult.keyInfo.usage}</dd>
                         </div>
                       </dl>
                     </div>
@@ -224,7 +221,7 @@ export default function PlaygroundPage() {
                             </span>
                           ))
                         ) : (
-                          <span className="text-gray-500 text-sm">No permissions assigned</span>
+                          <span className="text-gray-700 text-sm">No permissions assigned</span>
                         )}
                       </div>
                     </div>
@@ -232,12 +229,12 @@ export default function PlaygroundPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <span className="text-sm text-gray-600">Created:</span>
-                      <span className="ml-2 text-sm font-medium">{validationResult.keyInfo.createdAt}</span>
+                      <span className="text-sm text-blue-600 font-medium">Created:</span>
+                      <span className="ml-2 text-sm font-medium text-gray-900">{validationResult.keyInfo.createdAt}</span>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">Last Used:</span>
-                      <span className="ml-2 text-sm font-medium">{validationResult.keyInfo.lastUsed}</span>
+                      <span className="text-sm text-blue-600 font-medium">Last Used:</span>
+                      <span className="ml-2 text-sm font-medium text-gray-900">{validationResult.keyInfo.lastUsed}</span>
                     </div>
                   </div>
                 </div>
