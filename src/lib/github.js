@@ -1,3 +1,8 @@
+import { ChatAnthropic } from '@langchain/anthropic';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { StructuredOutputParser } from '@langchain/core/output_parsers';
+import { z } from 'zod';
+
 // GitHub API service for fetching repository information
 export const githubService = {
   // Get README.md content from GitHub repository
@@ -41,6 +46,50 @@ export const githubService = {
       };
     } catch (error) {
       console.error('Error fetching README content:', error);
+      throw error;
+    }
+  },
+
+  // Summarize README content using LangChain
+  async summarizeReadme(readmeContent) {
+    try {
+      // Define the output schema
+      const schema = z.object({
+        summary: z.string().describe('A comprehensive summary of the GitHub repository'),
+        cool_facts: z.array(z.string()).describe('A list of interesting facts about the repository')
+      });
+
+      // Create the output parser
+      const parser = StructuredOutputParser.fromZodSchema(schema);
+
+      // Create the prompt template
+      const prompt = ChatPromptTemplate.fromTemplate(`
+        Summarize this GitHub repository from this README content:
+        
+        {readmeContent}
+        
+        {format_instructions}
+      `);
+
+      // Initialize the LLM
+      const llm = new ChatAnthropic({
+        modelName: 'claude-3-haiku-20240307',
+        temperature: 0.7,
+        apiKey: process.env.ANTHROPIC_API_KEY
+      });
+
+      // Create the chain
+      const chain = prompt.pipe(llm).pipe(parser);
+
+      // Invoke the chain
+      const result = await chain.invoke({
+        readmeContent: readmeContent,
+        format_instructions: parser.getFormatInstructions()
+      });
+
+      return result;
+    } catch (error) {
+      console.error('Error summarizing README content:', error);
       throw error;
     }
   }

@@ -45,12 +45,16 @@ export async function POST(request) {
 
     if (keyInfo) {
       // Fetch README.md content from GitHub repository
-      const readmeContent = await githubService.getReadmeContent(githubUrl);
+      const readmeData = await githubService.getReadmeContent(githubUrl);
+      
+      // Summarize the README content using LangChain
+      const summary = await githubService.summarizeReadme(readmeData.content);
       
       return NextResponse.json({
         isValid: true,
         githubUrl: githubUrl,
-        readmeContent: readmeContent
+        readmeData: readmeData,
+        summary: summary
       });
     } else {
       return NextResponse.json({
