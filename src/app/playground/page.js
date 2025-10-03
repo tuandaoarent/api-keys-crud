@@ -114,7 +114,7 @@ export default function PlaygroundPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">API Playground</h1>
             <p className="text-gray-600">
-              Test and validate your API keys to ensure they're working correctly.
+              Test and validate your API keys to ensure they&apos;re working correctly.
             </p>
           </div>
 
@@ -259,7 +259,7 @@ export default function PlaygroundPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 mt-1">•</span>
-                <span>Click "Validate API Key" to check if the key is valid</span>
+                <span>Click &quot;Validate API Key&quot; to check if the key is valid</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 mt-1">•</span>
