@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NotificationPopup, { NOTIFICATION_TYPES } from '../../components/NotificationPopup';
-import { apiKeysService } from '../../lib/api-keys';
 
 export default function PlaygroundPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -31,27 +30,25 @@ export default function PlaygroundPage() {
 
   const validateApiKey = async (keyToValidate) => {
     try {
-      // Query Supabase directly for the specific API key
-      const keyInfo = await apiKeysService.validateKey(keyToValidate);
+      // Call the API endpoint to validate the key
+      const response = await fetch('/api/validate-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ apiKey: keyToValidate }),
+      });
+
+      const result = await response.json();
       
-      if (keyInfo) {
-        return {
-          isValid: true,
-          keyInfo: {
-            name: keyInfo.name,
-            type: keyInfo.type,
-            usage: keyInfo.usage,
-            permissions: keyInfo.permissions,
-            createdAt: keyInfo.createdAt,
-            lastUsed: keyInfo.lastUsed
-          }
-        };
-      } else {
+      if (!response.ok) {
         return {
           isValid: false,
-          error: 'API key not found or invalid'
+          error: result.error || 'Failed to validate API key'
         };
       }
+
+      return result;
     } catch (error) {
       console.error('Error validating API key:', error);
       return {
