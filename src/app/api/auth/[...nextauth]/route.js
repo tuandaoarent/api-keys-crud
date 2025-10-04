@@ -17,7 +17,9 @@ export const authOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Always redirect to homepage to avoid NextAuth default pages
+      // Handle callback URLs properly
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      if (url.startsWith(baseUrl)) return url;
       return baseUrl;
     },
     async signIn({ user, account, profile, email, credentials }) {

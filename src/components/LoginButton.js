@@ -44,10 +44,13 @@ export default function LoginButton() {
     setError(null); // Clear any existing errors
     
     try {
-      // Use NextAuth signIn with explicit callback URL
+      // Get callback URL from URL parameters
+      const callbackUrl = searchParams.get('callbackUrl') || '/';
+      
+      // Use NextAuth signIn with callback URL
       await signIn('google', { 
-        callbackUrl: '/',
-        redirect: true // Allow redirect but ensure it goes to homepage
+        callbackUrl: callbackUrl,
+        redirect: true
       });
     } catch (error) {
       console.error('Sign in error:', error);
