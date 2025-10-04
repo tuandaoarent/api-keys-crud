@@ -32,14 +32,10 @@ export default function LoginButton() {
       
       setError(errorMessages[errorParam] || errorMessages['Default']);
       
-      // Clear the error from URL after 5 seconds
-      setTimeout(() => {
-        setError(null);
-        // Remove error parameter from URL
-        const url = new URL(window.location);
-        url.searchParams.delete('error');
-        window.history.replaceState({}, '', url);
-      }, 5000);
+      // Remove error parameter from URL immediately but keep error visible
+      const url = new URL(window.location);
+      url.searchParams.delete('error');
+      window.history.replaceState({}, '', url);
     }
   }, [searchParams]);
 
@@ -105,11 +101,22 @@ export default function LoginButton() {
     <div className="w-full max-w-sm">
       {error && (
         <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
-          <div className="flex items-center">
-            <svg className="w-4 h-4 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-red-800 text-sm">{error}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <svg className="w-4 h-4 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-800 text-sm">{error}</p>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="ml-2 text-red-400 hover:text-red-600 transition-colors"
+              aria-label="Close error"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       )}
