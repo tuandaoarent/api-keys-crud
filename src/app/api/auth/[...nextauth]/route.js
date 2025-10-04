@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { SupabaseAdapter } from '@auth/supabase-adapter';
 
 export const authOptions = {
   providers: [
@@ -9,41 +8,32 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
-  }),
   callbacks: {
-    async session({ session, user }) {
-      // Send properties to the client
-      if (session?.user) {
-        session.user.id = user.id;
+    async session({ session, token }) {
+      // Add user ID to session from JWT token
+      if (session?.user && token) {
+        session.user.id = token.sub;
       }
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Always redirect to homepage - never to NextAuth default pages
-      // This ensures both success and error cases go to homepage
-      console.log('Redirect callback:', { url, baseUrl });
+      // Always redirect to homepage to avoid NextAuth default pages
       return baseUrl;
     },
     async signIn({ user, account, profile, email, credentials }) {
-      // Always allow sign in to prevent NextAuth redirects
-      console.log('SignIn callback:', { user, account, profile });
+      // Allow all sign-in attempts
       return true;
     },
     async jwt({ token, user, account, profile, trigger }) {
-      // Handle JWT token updates
-      console.log('JWT callback:', { token, user, account, trigger });
+      // Store OAuth access token in JWT
       if (account) {
         token.accessToken = account.access_token;
       }
       return token;
     },
   },
-  // Remove custom pages - let NextAuth use defaults but handle redirects properly
   session: {
-    strategy: 'database',
+    strategy: 'jwt',
   },
 };
 
