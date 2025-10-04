@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-export function middleware(request) {
+export async function middleware(request) {
   // Check if this is a NextAuth error redirect
   if (request.nextUrl.pathname.startsWith('/api/auth/signin') && 
       request.nextUrl.searchParams.has('error')) {
@@ -12,6 +13,18 @@ export function middleware(request) {
     
     return NextResponse.redirect(homepageUrl);
   }
+
+  // Protect dashboard routes
+  if (request.nextUrl.pathname.startsWith('/dashboards')) {
+    const token = await getToken({ req: request });
+    
+    if (!token) {
+      // User is not authenticated, redirect to homepage with callback
+      const homepageUrl = new URL('/', request.url);
+      homepageUrl.searchParams.set('callbackUrl', '/dashboards');
+      return NextResponse.redirect(homepageUrl);
+    }
+  }
   
   return NextResponse.next();
 }
@@ -19,5 +32,6 @@ export function middleware(request) {
 export const config = {
   matcher: [
     '/api/auth/:path*',
+    '/dashboards/:path*',
   ],
 };
