@@ -21,21 +21,24 @@ export const authOptions = {
       }
       return session;
     },
-    async jwt({ token, user, account }) {
-      // Persist the OAuth access_token to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token;
-      }
-      return token;
-    },
     async redirect({ url, baseUrl }) {
       // Always redirect to homepage - never to NextAuth default pages
       // This ensures both success and error cases go to homepage
+      console.log('Redirect callback:', { url, baseUrl });
       return baseUrl;
     },
     async signIn({ user, account, profile, email, credentials }) {
       // Always allow sign in to prevent NextAuth redirects
+      console.log('SignIn callback:', { user, account, profile });
       return true;
+    },
+    async jwt({ token, user, account, profile, trigger }) {
+      // Handle JWT token updates
+      console.log('JWT callback:', { token, user, account, trigger });
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
     },
   },
   // Remove custom pages - let NextAuth use defaults but handle redirects properly
