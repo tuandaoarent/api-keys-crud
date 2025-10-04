@@ -28,12 +28,15 @@ export default async function Home() {
                 </p>
                 <p className="text-sm text-gray-600">{session.user.email}</p>
               </div>
-              <Link
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-center"
-                href="/dashboards"
-              >
-                Go to Dashboard
-              </Link>
+              <div className="flex flex-col gap-3 w-full">
+                <Link
+                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-center"
+                  href="/dashboards"
+                >
+                  Go to Dashboard
+                </Link>
+                <LoginButton />
+              </div>
             </div>
           ) : (
             <LoginButton />

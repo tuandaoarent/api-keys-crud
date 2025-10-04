@@ -78,22 +78,16 @@ export default function LoginButton() {
 
   if (session) {
     return (
-      <div className="flex flex-col gap-2 items-center">
-        <div className="text-center">
-          <p className="text-sm font-medium">Signed in as {session.user.name}</p>
-          <p className="text-xs text-gray-600">{session.user.email}</p>
-        </div>
-        <button
-          onClick={handleSignOut}
-          disabled={isLoading}
-          className="rounded-full border border-solid border-red-200 transition-colors flex items-center justify-center bg-red-50 text-red-600 gap-2 hover:bg-red-100 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto disabled:opacity-50"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          {isLoading ? 'Signing out...' : 'Sign out'}
-        </button>
-      </div>
+      <button
+        onClick={handleSignOut}
+        disabled={isLoading}
+        className="w-full rounded-full border border-solid border-red-200 transition-colors flex items-center justify-center bg-red-50 text-red-600 gap-2 hover:bg-red-100 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 disabled:opacity-50"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        {isLoading ? 'Signing out...' : 'Sign out'}
+      </button>
     );
   }
 
