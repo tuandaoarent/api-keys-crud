@@ -14,12 +14,12 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex items-center relative">
           <div className="flex items-center gap-2">
             <GitBranch className="h-6 w-6 text-accent" />
             <span className="text-xl font-semibold font-mono">Pepperwood</span>
           </div>
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Features
             </Link>
@@ -30,7 +30,7 @@ export default async function LandingPage() {
               Docs
             </Link>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-auto">
             {session ? (
               <>
                 <span className="text-sm text-muted-foreground">
