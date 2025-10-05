@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 export default function Sidebar({ onCollapseChange }) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleToggleCollapse = () => {
     const newCollapsedState = !isCollapsed;
@@ -14,6 +15,14 @@ export default function Sidebar({ onCollapseChange }) {
     if (onCollapseChange) {
       onCollapseChange(newCollapsedState);
     }
+  };
+
+  const handleMobileMenuClose = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleMobileMenuToggle = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const navigationItems = [
@@ -97,9 +106,42 @@ export default function Sidebar({ onCollapseChange }) {
   };
 
   return (
-    <div className={`fixed left-0 top-0 h-full bg-gray-50 border-r border-gray-200 flex flex-col transition-all duration-300 ${
-      isCollapsed ? 'w-16' : 'w-64'
-    }`}>
+    <>
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
+          onClick={handleMobileMenuClose}
+        />
+      )}
+      
+      {/* Mobile Menu Button */}
+      <button
+        onClick={handleMobileMenuToggle}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors bg-white shadow-md"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* Sidebar */}
+      <div className={`fixed left-0 top-0 h-full bg-gray-50 border-r border-gray-200 flex flex-col transition-all duration-300 z-50 ${
+        isCollapsed ? 'w-16' : 'w-64'
+      } ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
+      {/* Mobile Close Button */}
+      <div className="lg:hidden flex justify-end p-4 border-b border-gray-200">
+        <button
+          onClick={handleMobileMenuClose}
+          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       {/* Header/Logo Section */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-center">
@@ -150,6 +192,10 @@ export default function Sidebar({ onCollapseChange }) {
               <Link
                 key={item.id}
                 href={item.href}
+                onClick={() => {
+                  // Close mobile menu when navigating
+                  handleMobileMenuClose();
+                }}
                 className={`flex items-center gap-3 p-3 rounded-lg transition-colors group ${
                   isActive 
                     ? 'bg-blue-50 text-blue-600' 
@@ -203,6 +249,7 @@ export default function Sidebar({ onCollapseChange }) {
         </button>
       </div>
 
-    </div>
+      </div>
+    </>
   );
 }

@@ -14,12 +14,12 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center relative">
+        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center relative">
           <div className="flex items-center gap-2">
-            <GitBranch className="h-6 w-6 text-accent" />
-            <span className="text-xl font-semibold font-mono">Pepperwood</span>
+            <GitBranch className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+            <span className="text-lg sm:text-xl font-semibold font-mono">Pepperwood</span>
           </div>
-          <nav className="hidden md:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="hidden lg:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Features
             </Link>
@@ -30,21 +30,27 @@ export default async function LandingPage() {
               Docs
             </Link>
           </nav>
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto">
             {session ? (
               <>
-                <span className="text-sm text-muted-foreground">
+                <span className="hidden sm:inline text-xs sm:text-sm text-muted-foreground">
                   Welcome, {session.user.name}
                 </span>
                 <Link href="/dashboards">
-                  <Button size="sm">Dashboard</Button>
+                  <Button size="sm" className="text-xs sm:text-sm px-2 sm:px-3">
+                    <span className="hidden sm:inline">Dashboard</span>
+                    <span className="sm:hidden">Dash</span>
+                  </Button>
                 </Link>
                 <LoginButton />
               </>
             ) : (
               <>
                 <LoginButton />
-                <Button size="sm">Sign Up</Button>
+                <Button size="sm" className="text-xs sm:text-sm px-2 sm:px-3">
+                  <span className="hidden sm:inline">Sign Up</span>
+                  <span className="sm:hidden">Sign Up</span>
+                </Button>
               </>
             )}
           </div>
@@ -52,30 +58,30 @@ export default async function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-24 md:py-32">
+      <section className="container mx-auto px-4 py-16 sm:py-20 md:py-24 lg:py-32">
         <div className="max-w-4xl mx-auto text-center">
           <Badge variant="secondary" className="mb-6 font-mono text-xs bg-gradient-to-r from-accent/20 to-accent/10 border-accent/30">
             <Sparkles className="h-3 w-3 mr-1 inline" />
             AI-Powered Repository Analysis
           </Badge>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 text-balance leading-tight">
             Deep insights for your GitHub repositories.
           </h1>
-          <p className="text-xl text-muted-foreground mb-10 text-pretty leading-relaxed max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-10 text-pretty leading-relaxed max-w-2xl mx-auto">
             Get comprehensive summaries, track stars, discover cool facts, monitor important pull requests, and stay
             updated with version changes—all in one powerful platform.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             {session ? (
               <Link href="/dashboards">
-                <Button size="lg" className="text-base px-8">
+                <Button size="lg" className="text-base px-6 sm:px-8 w-full sm:w-auto">
                   Go to Dashboard
                 </Button>
               </Link>
             ) : (
               <>
-                <LoginButton size="lg" />
-                <Button size="lg" variant="outline" className="text-base px-8 bg-transparent">
+                <LoginButton size="lg" className="w-full sm:w-auto" />
+                <Button size="lg" variant="outline" className="text-base px-6 sm:px-8 bg-transparent w-full sm:w-auto">
                   View Demo
                 </Button>
               </>
@@ -86,40 +92,40 @@ export default async function LandingPage() {
 
       {/* Stats Section */}
       <section className="border-y border-border">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="container mx-auto px-4 py-8 sm:py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">10K+</div>
-              <div className="text-sm text-muted-foreground">Repositories Analyzed</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">10K+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Repositories Analyzed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">500+</div>
-              <div className="text-sm text-muted-foreground">Active Users</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">500+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Active Users</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">99.9%</div>
-              <div className="text-sm text-muted-foreground">Uptime</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">99.9%</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Uptime</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">24/7</div>
-              <div className="text-sm text-muted-foreground">Monitoring</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">24/7</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Monitoring</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="container mx-auto px-4 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
+      <section id="features" className="container mx-auto px-4 py-16 sm:py-20 md:py-24">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance">
             Everything you need to understand your repositories.
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
             Powerful analytics and insights to help you make better decisions about your open source projects.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <Card className="bg-card border-border">
             <CardHeader>
               <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
@@ -193,15 +199,15 @@ export default async function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="container mx-auto px-4 py-24 bg-muted/30">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Simple, transparent pricing.</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+      <section id="pricing" className="container mx-auto px-4 py-16 sm:py-20 md:py-24 bg-muted/30">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance">Simple, transparent pricing.</h2>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
             Start free and scale as you grow. No hidden fees, no surprises.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
           {/* Free Tier */}
           <Card className="bg-card border-border">
             <CardHeader>
@@ -338,26 +344,26 @@ export default async function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-24">
-        <div className="max-w-3xl mx-auto text-center bg-gradient-to-br from-accent via-accent/90 to-accent/70 text-accent-foreground rounded-2xl p-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance">Ready to analyze your repositories?</h2>
-          <p className="text-lg mb-8 text-accent-foreground/90 text-pretty">
+      <section className="container mx-auto px-4 py-16 sm:py-20 md:py-24">
+        <div className="max-w-3xl mx-auto text-center bg-gradient-to-br from-accent via-accent/90 to-accent/70 text-accent-foreground rounded-2xl p-6 sm:p-8 md:p-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-balance">Ready to analyze your repositories?</h2>
+          <p className="text-base sm:text-lg mb-6 sm:mb-8 text-accent-foreground/90 text-pretty">
             Join hundreds of developers who trust Pepperwood for their GitHub analytics.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             {session ? (
               <Link href="/dashboards">
-                <Button size="lg" className="bg-background text-foreground hover:bg-background/90 px-8">
+                <Button size="lg" className="bg-background text-foreground hover:bg-background/90 px-6 sm:px-8 w-full sm:w-auto">
                   Go to Dashboard
                 </Button>
               </Link>
             ) : (
               <>
-                <LoginButton size="lg" />
+                <LoginButton size="lg" className="w-full sm:w-auto" />
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-accent-foreground/20 hover:bg-accent-foreground/10 px-8 bg-transparent"
+                  className="border-accent-foreground/20 hover:bg-accent-foreground/10 px-6 sm:px-8 bg-transparent w-full sm:w-auto"
                 >
                   Schedule Demo
                 </Button>
@@ -369,8 +375,8 @@ export default async function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
+        <div className="container mx-auto px-4 py-8 sm:py-12">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <GitBranch className="h-5 w-5 text-accent" />
