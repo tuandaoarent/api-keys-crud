@@ -54,7 +54,7 @@ export default async function LandingPage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-24 md:py-32">
         <div className="max-w-4xl mx-auto text-center">
-          <Badge variant="secondary" className="mb-6 font-mono text-xs">
+          <Badge variant="secondary" className="mb-6 font-mono text-xs bg-gradient-to-r from-accent/20 to-accent/10 border-accent/30">
             <Sparkles className="h-3 w-3 mr-1 inline" />
             AI-Powered Repository Analysis
           </Badge>
@@ -122,7 +122,7 @@ export default async function LandingPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="bg-card border-border">
             <CardHeader>
-              <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
                 <TrendingUp className="h-6 w-6 text-accent" />
               </div>
               <CardTitle>Smart Summaries</CardTitle>
@@ -134,7 +134,7 @@ export default async function LandingPage() {
 
           <Card className="bg-card border-border">
             <CardHeader>
-              <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
                 <Star className="h-6 w-6 text-accent" />
               </div>
               <CardTitle>Star Tracking</CardTitle>
@@ -146,7 +146,7 @@ export default async function LandingPage() {
 
           <Card className="bg-card border-border">
             <CardHeader>
-              <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
                 <Sparkles className="h-6 w-6 text-accent" />
               </div>
               <CardTitle>Cool Facts</CardTitle>
@@ -158,7 +158,7 @@ export default async function LandingPage() {
 
           <Card className="bg-card border-border">
             <CardHeader>
-              <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
                 <GitPullRequest className="h-6 w-6 text-accent" />
               </div>
               <CardTitle>PR Highlights</CardTitle>
@@ -168,7 +168,7 @@ export default async function LandingPage() {
 
           <Card className="bg-card border-border">
             <CardHeader>
-              <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
                 <Package className="h-6 w-6 text-accent" />
               </div>
               <CardTitle>Version Updates</CardTitle>
@@ -180,7 +180,7 @@ export default async function LandingPage() {
 
           <Card className="bg-card border-border">
             <CardHeader>
-              <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-4">
                 <GitBranch className="h-6 w-6 text-accent" />
               </div>
               <CardTitle>Real-time Sync</CardTitle>
@@ -242,7 +242,7 @@ export default async function LandingPage() {
           </Card>
 
           {/* Pro Tier */}
-          <Card className="bg-accent text-accent-foreground border-accent relative">
+          <Card className="bg-gradient-to-br from-accent via-accent/90 to-accent/70 text-accent-foreground border-accent relative">
             <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-background text-foreground">
               Most Popular
             </Badge>
@@ -339,7 +339,7 @@ export default async function LandingPage() {
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-24">
-        <div className="max-w-3xl mx-auto text-center bg-accent text-accent-foreground rounded-2xl p-12">
+        <div className="max-w-3xl mx-auto text-center bg-gradient-to-br from-accent via-accent/90 to-accent/70 text-accent-foreground rounded-2xl p-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance">Ready to analyze your repositories?</h2>
           <p className="text-lg mb-8 text-accent-foreground/90 text-pretty">
             Join hundreds of developers who trust Pepperwood for their GitHub analytics.
