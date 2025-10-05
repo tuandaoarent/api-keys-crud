@@ -131,17 +131,6 @@ export default function Sidebar({ onCollapseChange }) {
       } ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
-      {/* Mobile Close Button */}
-      <div className="lg:hidden flex justify-end p-4 border-b border-gray-200">
-        <button
-          onClick={handleMobileMenuClose}
-          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
       {/* Header/Logo Section */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-center">
@@ -222,11 +211,28 @@ export default function Sidebar({ onCollapseChange }) {
         </nav>
       </div>
 
-      {/* Collapse Button */}
+      {/* Bottom Button - Close on mobile, Collapse on desktop */}
       <div className="border-t border-gray-200">
+        {/* Mobile Close Button */}
+        <button
+          onClick={handleMobileMenuClose}
+          className={`lg:hidden w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-200 transition-colors ${
+            isCollapsed ? 'justify-center' : ''
+          }`}
+          title="Close sidebar"
+        >
+          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          {!isCollapsed && (
+            <span className="font-medium text-gray-700">Close</span>
+          )}
+        </button>
+
+        {/* Desktop Collapse Button */}
         <button
           onClick={handleToggleCollapse}
-          className={`w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-200 transition-colors ${
+          className={`hidden lg:flex w-full items-center gap-3 p-3 rounded-lg hover:bg-gray-200 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
