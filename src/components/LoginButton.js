@@ -3,8 +3,9 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
-export default function LoginButton() {
+export default function LoginButton({ size = "sm", className = "" }) {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -72,30 +73,32 @@ export default function LoginButton() {
 
   if (status === 'loading') {
     return (
-      <div className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-gray-100 text-gray-600 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto">
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
-        <span className="ml-2">Loading...</span>
-      </div>
+      <Button size={size} disabled className={className}>
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+        Loading...
+      </Button>
     );
   }
 
   if (session) {
     return (
-      <button
+      <Button
         onClick={handleSignOut}
         disabled={isLoading}
-        className="w-full rounded-full border border-solid border-red-200 transition-colors flex items-center justify-center bg-red-50 text-red-600 gap-2 hover:bg-red-100 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 disabled:opacity-50"
+        variant="destructive"
+        size={size}
+        className={className}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
         {isLoading ? 'Signing out...' : 'Sign out'}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <div className="w-full max-w-sm">
+    <div>
       {error && (
         <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
           <div className="flex items-center justify-between">
@@ -118,15 +121,17 @@ export default function LoginButton() {
         </div>
       )}
       
-      <button
+      <Button
         onClick={handleGoogleSignIn}
         disabled={isLoading}
-        className="w-full rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-white text-gray-700 gap-2 hover:bg-gray-50 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 disabled:opacity-50 shadow-sm border-gray-200"
+        variant="outline"
+        size={size}
+        className={`${size === "lg" ? "text-base px-8" : ""} text-foreground ${className}`}
       >
         {isLoading ? (
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
         ) : (
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -145,8 +150,8 @@ export default function LoginButton() {
             />
           </svg>
         )}
-        {isLoading ? 'Signing in...' : 'Sign in with Google'}
-      </button>
+        {isLoading ? 'Signing in...' : 'Login'}
+      </Button>
     </div>
   );
 }

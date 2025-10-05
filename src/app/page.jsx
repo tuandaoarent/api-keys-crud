@@ -3,8 +3,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { GitBranch, Star, TrendingUp, GitPullRequest, Package, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "./api/auth/[...nextauth]/route"
+import LoginButton from "../components/LoginButton"
+import DebugAuth from "../components/DebugAuth"
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await getServerSession(authOptions)
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -26,10 +31,22 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm">
-              Login
-            </Button>
-            <Button size="sm">Sign Up</Button>
+            {session ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  Welcome, {session.user.name}
+                </span>
+                <Link href="/dashboards">
+                  <Button size="sm">Dashboard</Button>
+                </Link>
+                <LoginButton />
+              </>
+            ) : (
+              <>
+                <LoginButton />
+                <Button size="sm">Sign Up</Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -49,12 +66,20 @@ export default function LandingPage() {
             updated with version changes—all in one powerful platform.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="text-base px-8">
-              Get Started Free
-            </Button>
-            <Button size="lg" variant="outline" className="text-base px-8 bg-transparent">
-              View Demo
-            </Button>
+            {session ? (
+              <Link href="/dashboards">
+                <Button size="lg" className="text-base px-8">
+                  Go to Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <LoginButton size="lg" />
+                <Button size="lg" variant="outline" className="text-base px-8 bg-transparent">
+                  View Demo
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -208,9 +233,11 @@ export default function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full bg-transparent">
-                Get Started
-              </Button>
+              <Link href="/dashboards" className="w-full">
+                <Button variant="outline" className="w-full bg-transparent">
+                  Get Started
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
 
@@ -256,7 +283,9 @@ export default function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-background text-foreground hover:bg-background/90">Start Free Trial</Button>
+              <Link href="/dashboards" className="w-full">
+                <Button className="w-full bg-background text-foreground hover:bg-background/90">Start Free Trial</Button>
+              </Link>
             </CardFooter>
           </Card>
 
@@ -298,9 +327,11 @@ export default function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full bg-transparent">
-                Contact Sales
-              </Button>
+              <Link href="/dashboards" className="w-full">
+                <Button variant="outline" className="w-full bg-transparent">
+                  Contact Sales
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         </div>
@@ -314,16 +345,24 @@ export default function LandingPage() {
             Join hundreds of developers who trust Pepperwood for their GitHub analytics.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="bg-background text-foreground hover:bg-background/90 px-8">
-              Start Free Trial
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-accent-foreground/20 hover:bg-accent-foreground/10 px-8 bg-transparent"
-            >
-              Schedule Demo
-            </Button>
+            {session ? (
+              <Link href="/dashboards">
+                <Button size="lg" className="bg-background text-foreground hover:bg-background/90 px-8">
+                  Go to Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <LoginButton size="lg" />
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-accent-foreground/20 hover:bg-accent-foreground/10 px-8 bg-transparent"
+                >
+                  Schedule Demo
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -415,6 +454,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      <DebugAuth />
     </div>
   )
 }
