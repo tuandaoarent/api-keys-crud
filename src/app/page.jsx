@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "./api/auth/[...nextauth]/route"
 import LoginButton from "../components/LoginButton"
 import DebugAuth from "../components/DebugAuth"
+import { ApiDemo } from "../components/ApiDemo"
 
 export default async function LandingPage() {
   const session = await getServerSession(authOptions)
@@ -197,6 +198,9 @@ export default async function LandingPage() {
           </Card>
         </div>
       </section>
+
+      {/* API Demo Section */}
+      <ApiDemo />
 
       {/* Pricing Section */}
       <section id="pricing" className="container mx-auto px-4 py-16 sm:py-20 md:py-24 bg-muted/30">
