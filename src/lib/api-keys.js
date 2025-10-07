@@ -79,18 +79,6 @@ export const apiKeysService = {
     }
   },
 
-  // Increment usage count
-  async incrementUsage(id) {
-    try {
-      await makeAuthenticatedRequest(`${API_BASE_URL}/${id}/usage`, {
-        method: 'POST'
-      })
-      return true
-    } catch (error) {
-      console.error('Error incrementing usage:', error)
-      throw error
-    }
-  },
 
   // Validate a specific API key
   async validateKey(keyValue) {

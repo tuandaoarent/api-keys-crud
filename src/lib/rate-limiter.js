@@ -46,33 +46,6 @@ export const checkRateLimit = async (apiKey) => {
   }
 }
 
-/**
- * Increment usage count for an API key
- * @param {string} keyId - The API key ID
- * @param {number} currentUsage - Current usage count
- * @returns {Promise<boolean>}
- */
-export const incrementUsage = async (keyId, currentUsage) => {
-  try {
-    const { error } = await supabase
-      .from('api_keys')
-      .update({
-        usage_count: currentUsage + 1,
-        last_used_at: new Date().toISOString()
-      })
-      .eq('id', keyId)
-
-    if (error) {
-      console.error('Error incrementing usage:', error)
-      return false
-    }
-
-    return true
-  } catch (error) {
-    console.error('Error incrementing usage:', error)
-    return false
-  }
-}
 
 /**
  * Get rate limit information for an API key

@@ -50,6 +50,75 @@ export const githubService = {
     }
   },
 
+  // Get repository metadata (stars, latest version, etc.)
+  async getRepositoryMetadata(githubUrl) {
+    try {
+      // Extract owner and repo from GitHub URL
+      const urlPattern = /github\.com\/([^\/]+)\/([^\/]+)/;
+      const match = githubUrl.match(urlPattern);
+      
+      if (!match) {
+        throw new Error('Invalid GitHub URL format');
+      }
+      
+      const [, owner, repo] = match;
+      
+      // Fetch repository information and latest release in parallel
+      const [repoResponse, releaseResponse] = await Promise.allSettled([
+        fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'GitHub-Repo-Fetcher'
+          }
+        }),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'GitHub-Release-Fetcher'
+          }
+        })
+      ]);
+      
+      // Handle repository response
+      if (repoResponse.status === 'rejected' || !repoResponse.value.ok) {
+        throw new Error(`GitHub API error: ${repoResponse.value?.status || 'Network error'}`);
+      }
+      
+      const repoData = await repoResponse.value.json();
+      
+      // Handle release response (optional, so we don't fail if no releases exist)
+      let latestRelease = null;
+      if (releaseResponse.status === 'fulfilled' && releaseResponse.value.ok) {
+        try {
+          latestRelease = await releaseResponse.value.json();
+        } catch (error) {
+          console.log('Error parsing release data:', error.message);
+        }
+      }
+      
+      return {
+        stars: repoData.stargazers_count,
+        forks: repoData.forks_count,
+        watchers: repoData.watchers_count,
+        openIssues: repoData.open_issues_count,
+        language: repoData.language,
+        createdAt: repoData.created_at,
+        updatedAt: repoData.updated_at,
+        description: repoData.description,
+        topics: repoData.topics || [],
+        license: repoData.license?.name || null,
+        latestRelease: latestRelease ? {
+          version: latestRelease.tag_name,
+          publishedAt: latestRelease.published_at,
+          name: latestRelease.name
+        } : null
+      };
+    } catch (error) {
+      console.error('Error fetching repository metadata:', error);
+      throw error;
+    }
+  },
+
   // Summarize README content using LangChain
   async summarizeReadme(readmeContent) {
     try {

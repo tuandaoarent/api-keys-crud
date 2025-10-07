@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { checkRateLimit, incrementUsage } from '../../../lib/rate-limiter';
+import { checkRateLimit } from '../../../lib/rate-limiter';
+import { supabase } from '../../../lib/supabase';
 import { githubService } from '../../../lib/github';
 
 export async function POST(request) {
@@ -55,10 +56,19 @@ export async function POST(request) {
     const currentUsage = keyInfo.usage_count || 0;
 
     // Increment usage count for the API key
-    await incrementUsage(keyInfo.id, currentUsage);
+    await supabase
+      .from('api_keys')
+      .update({
+        usage_count: currentUsage + 1,
+        last_used_at: new Date().toISOString()
+      })
+      .eq('id', keyInfo.id);
 
-    // Fetch README.md content from GitHub repository
-    const readmeData = await githubService.getReadmeContent(githubUrl);
+    // Fetch README content and repository metadata in parallel
+    const [readmeData, repositoryMetadata] = await Promise.all([
+      githubService.getReadmeContent(githubUrl),
+      githubService.getRepositoryMetadata(githubUrl)
+    ]);
     
     // Summarize the README content using LangChain
     const summary = await githubService.summarizeReadme(readmeData.content);
@@ -67,6 +77,7 @@ export async function POST(request) {
       isValid: true,
       githubUrl: githubUrl,
       readmeData: readmeData,
+      repositoryMetadata: repositoryMetadata,
       summary: summary
     });
   } catch (error) {
