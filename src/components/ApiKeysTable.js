@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 
-export default function ApiKeysTable({ 
-  apiKeys, 
-  onEditKey, 
-  onDeleteKey, 
-  onCopyKey, 
-  onToggleVisibility 
+export default function ApiKeysTable({
+  apiKeys,
+  onEditKey,
+  onDeleteKey,
+  onCopyKey,
+  onToggleVisibility
 }) {
   const [visibleKeys, setVisibleKeys] = useState({});
 
@@ -19,61 +19,36 @@ export default function ApiKeysTable({
     onToggleVisibility(keyId);
   };
 
-  if (apiKeys.length === 0) {
-    return (
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
-        <div className="bg-gray-50 border-b border-gray-200">
-          <div className="grid grid-cols-12 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
-            <div className="col-span-3">NAME</div>
-            <div className="col-span-2">USAGE</div>
-            <div className="col-span-3">KEY</div>
-            <div className="col-span-2">PERMISSIONS</div>
-            <div className="col-span-2">OPTIONS</div>
-          </div>
-        </div>
-        <div className="p-8 text-center">
-          <div className="text-gray-500 mb-2">
-            <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No API keys found</h3>
-          <p className="text-gray-500">Create your first API key to get started.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         {/* Table Header */}
         <div className="bg-gray-50 border-b border-gray-200">
-          <div className="flex px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
-            <div className="flex-3 min-w-[120px]">NAME</div>
-            <div className="flex-2 min-w-[80px]">USAGE</div>
-            <div className="flex-3 min-w-[200px]">KEY</div>
-            <div className="flex-2 min-w-[120px]">PERMISSIONS</div>
-            <div className="flex-2 min-w-[140px]">OPTIONS</div>
+          <div className="grid grid-cols-[minmax(100px,2fr)_minmax(50px,1fr)_minmax(100px,2fr)_minmax(100px,2fr)_minmax(100px,2fr)] px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
+            <div>NAME</div>
+            <div>USAGE</div>
+            <div>KEY</div>
+            <div>PERMISSIONS</div>
+            <div>OPTIONS</div>
           </div>
         </div>
-        
+
         {/* Table Body */}
         <div className="divide-y divide-gray-200">
           {apiKeys.map((key) => (
-            <div key={key.id} className="flex px-6 py-4 items-center hover:bg-gray-50">
-              <div className="flex-3 min-w-[120px]">
-                <div className="font-medium text-gray-900">{key.name}</div>
+            <div key={key.id} className="grid grid-cols-[minmax(100px,2fr)_minmax(50px,1fr)_minmax(100px,2fr)_minmax(100px,2fr)_minmax(100px,2fr)] px-6 py-4 items-center hover:bg-gray-50">
+              <div>
+                <div className="font-medium text-gray-900 break-normal">{key.name}</div>
               </div>
-              <div className="flex-2 min-w-[80px]">
-                <div className="text-gray-900">{key.usage}</div>
+              <div>
+                <div className="text-gray-900 break-normal">{key.usage}</div>
               </div>
-              <div className="flex-3 min-w-[200px]">
-                <div className="font-mono text-sm text-gray-600">
+              <div>
+                <div className="font-mono text-sm text-gray-600 break-all">
                   {visibleKeys[key.id] ? key.fullKey : key.key}
                 </div>
               </div>
-              <div className="flex-2 min-w-[120px]">
+              <div>
                 <div className="flex flex-wrap gap-1">
                   {key.permissions && key.permissions.length > 0 ? (
                     key.permissions.map((permission) => (
@@ -89,8 +64,8 @@ export default function ApiKeysTable({
                   )}
                 </div>
               </div>
-              <div className="flex-2 min-w-[140px]">
-                <div className="flex items-center gap-2">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => toggleKeyVisibility(key.id)}
                     className="p-1.5 text-gray-400 hover:text-gray-600"
@@ -133,6 +108,17 @@ export default function ApiKeysTable({
             </div>
           ))}
         </div>
+
+        {apiKeys.length === 0 && (
+          <div className="p-8 text-center">
+            <div className="text-gray-500 mb-2">
+              <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No API keys found</h3>
+            <p className="text-gray-500">Create your first API key to get started.</p>
+          </div>)}
       </div>
     </div>
   );
