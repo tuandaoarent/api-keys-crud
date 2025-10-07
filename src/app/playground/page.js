@@ -7,8 +7,9 @@ import NotificationPopup, { NOTIFICATION_TYPES } from '../../components/Notifica
 export default function PlaygroundPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [apiKey, setApiKey] = useState('');
-  const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState(null);
+  const [githubUrl, setGithubUrl] = useState('');
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summaryResult, setSummaryResult] = useState(null);
   const [notification, setNotification] = useState({
     show: false,
     message: '',
@@ -28,15 +29,17 @@ export default function PlaygroundPage() {
     setNotification(prev => ({ ...prev, show: false }));
   };
 
-  const validateApiKey = async (keyToValidate) => {
+
+  const summarizeGitHubRepo = async (keyToUse, repoUrl) => {
     try {
-      // Call the API endpoint to validate the key
-      const response = await fetch('/api/validate-key', {
+      // Call the GitHub summarizer API endpoint
+      const response = await fetch('/api/github-summarizer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': keyToUse,
         },
-        body: JSON.stringify({ apiKey: keyToValidate }),
+        body: JSON.stringify({ githubUrl: repoUrl }),
       });
 
       const result = await response.json();
@@ -44,21 +47,22 @@ export default function PlaygroundPage() {
       if (!response.ok) {
         return {
           isValid: false,
-          error: result.error || 'Failed to validate API key'
+          error: result.error || 'Failed to summarize GitHub repository'
         };
       }
 
       return result;
     } catch (error) {
-      console.error('Error validating API key:', error);
+      console.error('Error summarizing GitHub repository:', error);
       return {
         isValid: false,
-        error: 'Failed to validate API key. Please try again.'
+        error: 'Failed to summarize GitHub repository. Please try again.'
       };
     }
   };
 
-  const handleSubmit = async (e) => {
+
+  const handleSummarySubmit = async (e) => {
     e.preventDefault();
     
     if (!apiKey.trim()) {
@@ -66,29 +70,35 @@ export default function PlaygroundPage() {
       return;
     }
 
-    setIsValidating(true);
-    setValidationResult(null);
+    if (!githubUrl.trim()) {
+      showNotification('Please enter a GitHub repository URL', NOTIFICATION_TYPES.ERROR);
+      return;
+    }
+
+    setIsSummarizing(true);
+    setSummaryResult(null);
 
     try {
-      const result = await validateApiKey(apiKey.trim());
-      setValidationResult(result);
+      const result = await summarizeGitHubRepo(apiKey.trim(), githubUrl.trim());
+      setSummaryResult(result);
       
       if (result.isValid) {
-        showNotification('API key is valid!', NOTIFICATION_TYPES.SUCCESS);
+        showNotification('GitHub repository summarized successfully!', NOTIFICATION_TYPES.SUCCESS);
       } else {
         showNotification(result.error, NOTIFICATION_TYPES.ERROR);
       }
     } catch (error) {
-      console.error('Validation error:', error);
-      showNotification('An error occurred during validation', NOTIFICATION_TYPES.ERROR);
+      console.error('Summary error:', error);
+      showNotification('An error occurred during summarization', NOTIFICATION_TYPES.ERROR);
     } finally {
-      setIsValidating(false);
+      setIsSummarizing(false);
     }
   };
 
   const handleClear = () => {
     setApiKey('');
-    setValidationResult(null);
+    setGithubUrl('');
+    setSummaryResult(null);
   };
 
   return (
@@ -111,136 +121,164 @@ export default function PlaygroundPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">API Playground</h1>
             <p className="text-gray-600">
-              Test and validate your API keys to ensure they&apos;re working correctly.
+              Summarize GitHub repositories using our AI-powered analysis.
             </p>
           </div>
 
-          {/* API Key Validation Form */}
+          {/* GitHub Repository Summarizer Form */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">API Key Validator</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">GitHub Repository Summarizer</h2>
             
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSummarySubmit} className="space-y-4">
               <div>
-                <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="apiKeySummary" className="block text-sm font-medium text-gray-700 mb-2">
                   API Key
                 </label>
                 <div className="relative">
                   <input
                     type="text"
-                    id="apiKey"
+                    id="apiKeySummary"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm placeholder-gray-500 text-gray-900"
                     placeholder="Enter your API key (e.g., tvly-dev-...)"
-                    disabled={isValidating}
+                    disabled={isSummarizing}
                   />
-                  {apiKey && (
-                    <button
-                      type="button"
-                      onClick={handleClear}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                  GitHub Repository URL
+                </label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    id="githubUrl"
+                    value={githubUrl}
+                    onChange={(e) => setGithubUrl(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-500 text-gray-900"
+                    placeholder="https://github.com/owner/repository"
+                    disabled={isSummarizing}
+                  />
                 </div>
               </div>
 
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  disabled={isValidating || !apiKey.trim()}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  disabled={isSummarizing || !apiKey.trim() || !githubUrl.trim()}
+                  className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  {isValidating && (
+                  {isSummarizing && (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                   )}
-                  {isValidating ? 'Validating...' : 'Validate API Key'}
+                  {isSummarizing ? 'Analyzing...' : 'Summarize Repository'}
                 </button>
                 
                 <button
                   type="button"
                   onClick={handleClear}
-                  disabled={isValidating}
+                  disabled={isSummarizing}
                   className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Clear
+                  Clear All
                 </button>
               </div>
             </form>
           </div>
 
-          {/* Validation Results */}
-          {validationResult && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Validation Result</h3>
+
+          {/* Summary Results */}
+          {summaryResult && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Repository Analysis</h3>
               
-              {validationResult.isValid ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-green-600 mb-4">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="font-medium">Valid API Key</span>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-900 mb-2">Key Information</h4>
-                      <dl className="space-y-2 text-sm">
+              {summaryResult.isValid ? (
+                <div className="space-y-6">
+                  {/* Repository Metadata */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-gray-900 mb-3">Repository Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="text-blue-600 font-medium">Stars:</span>
+                        <span className="ml-2 font-medium text-gray-900">{summaryResult.repositoryMetadata.stars?.toLocaleString() || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 font-medium">Forks:</span>
+                        <span className="ml-2 font-medium text-gray-900">{summaryResult.repositoryMetadata.forks?.toLocaleString() || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 font-medium">Language:</span>
+                        <span className="ml-2 font-medium text-gray-900">{summaryResult.repositoryMetadata.language || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 font-medium">Open Issues:</span>
+                        <span className="ml-2 font-medium text-gray-900">{summaryResult.repositoryMetadata.openIssues || 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 font-medium">License:</span>
+                        <span className="ml-2 font-medium text-gray-900">{summaryResult.repositoryMetadata.license || 'N/A'}</span>
+                      </div>
+                      {summaryResult.repositoryMetadata.latestRelease && (
                         <div>
-                          <dt className="text-blue-600 font-medium">Name:</dt>
-                          <dd className="font-medium text-gray-900">{validationResult.keyInfo.name}</dd>
+                          <span className="text-blue-600 font-medium">Latest Version:</span>
+                          <span className="ml-2 font-medium text-gray-900">{summaryResult.repositoryMetadata.latestRelease.version}</span>
                         </div>
-                        <div>
-                          <dt className="text-blue-600 font-medium">Type:</dt>
-                          <dd className="font-medium text-gray-900 capitalize">{validationResult.keyInfo.type}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-blue-600 font-medium">Usage Count:</dt>
-                          <dd className="font-medium text-gray-900">{validationResult.keyInfo.usage}</dd>
-                        </div>
-                      </dl>
+                      )}
                     </div>
-                    
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-900 mb-2">Permissions</h4>
+                    {summaryResult.repositoryMetadata.description && (
+                      <div className="mt-3">
+                        <span className="text-blue-600 font-medium">Description:</span>
+                        <p className="mt-1 text-gray-900">{summaryResult.repositoryMetadata.description}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* AI Summary */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-gray-900 mb-3">AI Summary</h4>
+                    <p className="text-gray-800 leading-relaxed">{summaryResult.summary.summary}</p>
+                  </div>
+
+                  {/* Cool Facts */}
+                  {summaryResult.summary.cool_facts && summaryResult.summary.cool_facts.length > 0 && (
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-3">Interesting Facts</h4>
+                      <ul className="space-y-2">
+                        {summaryResult.summary.cool_facts.map((fact, index) => (
+                          <li key={index} className="flex items-start gap-2 text-gray-800">
+                            <span className="text-green-600 mt-1">•</span>
+                            <span>{fact}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Topics */}
+                  {summaryResult.repositoryMetadata.topics && summaryResult.repositoryMetadata.topics.length > 0 && (
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-3">Topics</h4>
                       <div className="flex flex-wrap gap-2">
-                        {validationResult.keyInfo.permissions && validationResult.keyInfo.permissions.length > 0 ? (
-                          validationResult.keyInfo.permissions.map((permission) => (
-                            <span
-                              key={permission}
-                              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                            >
-                              {permission}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-gray-700 text-sm">No permissions assigned</span>
-                        )}
+                        {summaryResult.repositoryMetadata.topics.map((topic) => (
+                          <span
+                            key={topic}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800"
+                          >
+                            {topic}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <span className="text-sm text-blue-600 font-medium">Created:</span>
-                      <span className="ml-2 text-sm font-medium text-gray-900">{validationResult.keyInfo.createdAt}</span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-blue-600 font-medium">Last Used:</span>
-                      <span className="ml-2 text-sm font-medium text-gray-900">{validationResult.keyInfo.lastUsed}</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-red-600">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="font-medium">Invalid API Key</span>
+                  <span className="font-medium">Failed to analyze repository</span>
                 </div>
               )}
             </div>
@@ -256,15 +294,19 @@ export default function PlaygroundPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 mt-1">•</span>
-                <span>Click &quot;Validate API Key&quot; to check if the key is valid</span>
+                <span>Enter a GitHub repository URL to get AI-powered analysis and summary</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 mt-1">•</span>
-                <span>View detailed information about valid keys including permissions and usage</span>
+                <span>Click &quot;Summarize Repository&quot; to analyze the repository</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 mt-1">•</span>
-                <span>Use this tool to test keys before implementing them in your applications</span>
+                <span>View repository metadata including stars, forks, language, and latest version</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 mt-1">•</span>
+                <span>Get intelligent insights and interesting facts about the repository</span>
               </li>
             </ul>
           </div>
