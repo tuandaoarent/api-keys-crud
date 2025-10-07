@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { apiKeysService } from '../../../lib/api-keys';
+import { supabase } from '../../../lib/supabase';
 import { githubService } from '../../../lib/github';
 
 export async function POST(request) {
@@ -40,28 +40,42 @@ export async function POST(request) {
       );
     }
 
-    // Validate the API key using the existing service
-    const keyInfo = await apiKeysService.validateKey(apiKey.trim());
+    // Validate the API key directly with Supabase
+    const { data: keyInfo, error: keyError } = await supabase
+      .from('api_keys')
+      .select('*')
+      .eq('key_value', apiKey.trim())
+      .single();
 
-    if (keyInfo) {
-      // Fetch README.md content from GitHub repository
-      const readmeData = await githubService.getReadmeContent(githubUrl);
-      
-      // Summarize the README content using LangChain
-      const summary = await githubService.summarizeReadme(readmeData.content);
-      
-      return NextResponse.json({
-        isValid: true,
-        githubUrl: githubUrl,
-        readmeData: readmeData,
-        summary: summary
-      });
-    } else {
+    if (keyError || !keyInfo) {
       return NextResponse.json({
         isValid: false,
         error: 'API key not found or invalid'
-      }, { status: 401 }); // Unauthorized
+      }, { status: 401 });
     }
+
+    // Increment usage count for the API key
+    const currentUsage = keyInfo.usage_count || 0;
+    await supabase
+      .from('api_keys')
+      .update({
+        usage_count: currentUsage + 1,
+        last_used_at: new Date().toISOString()
+      })
+      .eq('id', keyInfo.id);
+
+    // Fetch README.md content from GitHub repository
+    const readmeData = await githubService.getReadmeContent(githubUrl);
+    
+    // Summarize the README content using LangChain
+    const summary = await githubService.summarizeReadme(readmeData.content);
+    
+    return NextResponse.json({
+      isValid: true,
+      githubUrl: githubUrl,
+      readmeData: readmeData,
+      summary: summary
+    });
   } catch (error) {
     console.error('Error in github-summarizer:', error);
     
