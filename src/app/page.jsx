@@ -209,7 +209,7 @@ export default async function LandingPage() {
 
         <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
           {/* Free Tier */}
-          <Card className="bg-card border-border">
+          <Card className="bg-card border-border flex flex-col h-full">
             <CardHeader>
               <CardTitle className="text-2xl">Free</CardTitle>
               <CardDescription>Perfect for trying out Pepperwood</CardDescription>
@@ -218,7 +218,7 @@ export default async function LandingPage() {
                 <span className="text-muted-foreground">/month</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-0.5">✓</span>
@@ -240,7 +240,7 @@ export default async function LandingPage() {
             </CardContent>
             <CardFooter>
               <Link href="/dashboards" className="w-full">
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
                   Get Started
                 </Button>
               </Link>
@@ -248,19 +248,16 @@ export default async function LandingPage() {
           </Card>
 
           {/* Pro Tier */}
-          <Card className="bg-gradient-to-br from-accent via-accent/90 to-accent/70 text-accent-foreground border-accent relative">
-            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-background text-foreground">
-              Most Popular
-            </Badge>
+          <Card className="bg-card border-border flex flex-col h-full">
             <CardHeader>
               <CardTitle className="text-2xl">Pro</CardTitle>
-              <CardDescription className="text-accent-foreground/80">For serious developers</CardDescription>
+              <CardDescription>For serious developers</CardDescription>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$19</span>
-                <span className="text-accent-foreground/80">/month</span>
+                <span className="text-muted-foreground">/month</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5">✓</span>
@@ -289,14 +286,14 @@ export default async function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Link href="/dashboards" className="w-full">
-                <Button className="w-full bg-background text-foreground hover:bg-background/90">Start Free Trial</Button>
-              </Link>
+              <Button className="w-full bg-background text-foreground hover:bg-background/90 cursor-not-allowed opacity-60" disabled>
+                Coming Soon
+              </Button>
             </CardFooter>
           </Card>
 
           {/* Enterprise Tier */}
-          <Card className="bg-card border-border">
+          <Card className="bg-card border-border flex flex-col h-full">
             <CardHeader>
               <CardTitle className="text-2xl">Enterprise</CardTitle>
               <CardDescription>For teams and organizations</CardDescription>
@@ -304,7 +301,7 @@ export default async function LandingPage() {
                 <span className="text-4xl font-bold">Custom</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-0.5">✓</span>
@@ -333,11 +330,9 @@ export default async function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Link href="/dashboards" className="w-full">
-                <Button variant="outline" className="w-full bg-transparent">
-                  Contact Sales
-                </Button>
-              </Link>
+              <Button variant="outline" className="w-full bg-transparent cursor-not-allowed opacity-60" disabled>
+                Coming Soon
+              </Button>
             </CardFooter>
           </Card>
         </div>
