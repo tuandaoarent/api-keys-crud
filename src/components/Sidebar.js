@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Sidebar({ onCollapseChange }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleToggleCollapse = () => {
     const newCollapsedState = !isCollapsed;
@@ -23,6 +26,16 @@ export default function Sidebar({ onCollapseChange }) {
 
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await signOut({ callbackUrl: '/' });
+    } catch (error) {
+      console.error('Sign out error:', error);
+      setIsSigningOut(false);
+    }
   };
 
   const navigationItems = [
@@ -157,6 +170,64 @@ export default function Sidebar({ onCollapseChange }) {
           })}
         </nav>
       </div>
+
+      {/* User Profile Section */}
+      {session?.user && (
+        <div className="border-t border-gray-200 p-3">
+          <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+            {/* User Avatar */}
+            <div className="flex-shrink-0">
+              {session.user.image ? (
+                <img
+                  src={session.user.image}
+                  alt={session.user.name || 'User'}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {(session.user.name || session.user.email || 'U').charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            {/* User Info */}
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {session.user.name || 'User'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {session.user.email}
+                </p>
+              </div>
+            )}
+
+            {/* Sign Out Button - Hidden when collapsed */}
+            {!isCollapsed && (
+              <button
+                onClick={handleSignOut}
+                disabled={isSigningOut}
+                className={`flex-shrink-0 p-2 rounded-lg transition-colors w-8 h-8 flex items-center justify-center ${
+                  isSigningOut 
+                    ? 'bg-gray-100 cursor-not-allowed' 
+                    : 'hover:bg-gray-200'
+                }`}
+                title={isSigningOut ? "Signing out..." : "Sign out"}
+              >
+                {isSigningOut ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+                ) : (
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Bottom Button - Close on mobile, Collapse on desktop */}
       <div className="border-t border-gray-200">
