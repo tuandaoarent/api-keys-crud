@@ -468,7 +468,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </footer>
-      <DebugAuth />
     </div>
   )
 }
