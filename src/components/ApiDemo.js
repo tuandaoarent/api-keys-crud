@@ -161,7 +161,7 @@ pip install langchain
             <CardContent>
               {!response && !isLoading && (
                 <div className="flex items-center justify-center h-64 text-muted-foreground text-sm">
-                  Click "Run Demo" to see the response
+                  Click &quot;Run Demo&quot; to see the response
                 </div>
               )}
 
