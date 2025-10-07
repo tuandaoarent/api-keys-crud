@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../lib/supabase';
+import { checkRateLimit, incrementUsage } from '../../../lib/rate-limiter';
 import { githubService } from '../../../lib/github';
 
 export async function POST(request) {
@@ -40,29 +40,22 @@ export async function POST(request) {
       );
     }
 
-    // Validate the API key directly with Supabase
-    const { data: keyInfo, error: keyError } = await supabase
-      .from('api_keys')
-      .select('*')
-      .eq('key_value', apiKey.trim())
-      .single();
+    // Check rate limit using utility function
+    const rateLimitResult = await checkRateLimit(apiKey.trim());
 
-    if (keyError || !keyInfo) {
+    if (!rateLimitResult.isValid) {
+      const statusCode = rateLimitResult.error.includes('Rate limit exceeded') ? 429 : 401;
       return NextResponse.json({
         isValid: false,
-        error: 'API key not found or invalid'
-      }, { status: 401 });
+        error: rateLimitResult.error
+      }, { status: statusCode });
     }
 
-    // Increment usage count for the API key
+    const keyInfo = rateLimitResult.keyInfo;
     const currentUsage = keyInfo.usage_count || 0;
-    await supabase
-      .from('api_keys')
-      .update({
-        usage_count: currentUsage + 1,
-        last_used_at: new Date().toISOString()
-      })
-      .eq('id', keyInfo.id);
+
+    // Increment usage count for the API key
+    await incrementUsage(keyInfo.id, currentUsage);
 
     // Fetch README.md content from GitHub repository
     const readmeData = await githubService.getReadmeContent(githubUrl);
@@ -79,6 +72,17 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error in github-summarizer:', error);
     
+    // Handle rate limit errors
+    if (error.message.includes('Rate limit exceeded')) {
+      return NextResponse.json(
+        { 
+          isValid: false, 
+          error: error.message
+        },
+        { status: 429 }
+      );
+    }
+
     // Handle specific GitHub API errors
     if (error.message.includes('Invalid GitHub URL format')) {
       return NextResponse.json(
