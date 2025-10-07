@@ -1,41 +1,28 @@
 import { NextResponse } from 'next/server';
-import { apiKeysService } from '../../../lib/api-keys';
+import { validateApiKey, transformKeyInfo } from '../../../lib/api-key-validator';
 
 export async function POST(request) {
   try {
     const { apiKey } = await request.json();
 
-    if (!apiKey || !apiKey.trim()) {
-      return NextResponse.json(
-        { 
-          isValid: false, 
-          error: 'API key is required' 
-        },
-        { status: 400 }
-      );
-    }
+    // Validate the API key using unified validator
+    const validationResult = await validateApiKey(apiKey);
 
-    // Validate the API key using the existing service
-    const keyInfo = await apiKeysService.validateKey(apiKey.trim());
-
-    if (keyInfo) {
-      return NextResponse.json({
-        isValid: true,
-        keyInfo: {
-          name: keyInfo.name,
-          type: keyInfo.type,
-          usage: keyInfo.usage,
-          permissions: keyInfo.permissions,
-          createdAt: keyInfo.createdAt,
-          lastUsed: keyInfo.lastUsed
-        }
-      });
-    } else {
+    if (!validationResult.isValid) {
+      const statusCode = validationResult.error === 'API key is required' ? 400 : 401;
       return NextResponse.json({
         isValid: false,
-        error: 'API key not found or invalid'
-      }, { status: 401 }); // Unauthorized
+        error: validationResult.error
+      }, { status: statusCode });
     }
+
+    // Transform data to match expected format
+    const transformedKeyInfo = transformKeyInfo(validationResult.keyInfo);
+
+    return NextResponse.json({
+      isValid: true,
+      keyInfo: transformedKeyInfo
+    });
   } catch (error) {
     console.error('Error validating API key:', error);
     return NextResponse.json(
