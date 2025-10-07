@@ -8,6 +8,7 @@ import { authOptions } from "./api/auth/[...nextauth]/route"
 import LoginButton from "../components/LoginButton"
 import DebugAuth from "../components/DebugAuth"
 import { ApiDemo } from "../components/ApiDemo"
+import { ScrollButton } from "../components/ScrollButton"
 
 export default async function LandingPage() {
   const session = await getServerSession(authOptions)
@@ -82,9 +83,14 @@ export default async function LandingPage() {
             ) : (
               <>
                 <LoginButton size="lg" className="w-full sm:w-auto" />
-                <Button size="lg" variant="outline" className="text-base px-6 sm:px-8 bg-transparent w-full sm:w-auto">
+                <ScrollButton 
+                  size="lg" 
+                  variant="outline" 
+                  className="text-base px-6 sm:px-8 bg-transparent w-full sm:w-auto"
+                  targetId="api-demo"
+                >
                   View Demo
-                </Button>
+                </ScrollButton>
               </>
             )}
           </div>
@@ -200,7 +206,9 @@ export default async function LandingPage() {
       </section>
 
       {/* API Demo Section */}
-      <ApiDemo />
+      <div id="api-demo">
+        <ApiDemo />
+      </div>
 
       {/* Pricing Section */}
       <section id="pricing" className="container mx-auto px-4 py-16 sm:py-20 md:py-24 bg-muted/30">
@@ -359,13 +367,14 @@ export default async function LandingPage() {
             ) : (
               <>
                 <LoginButton size="lg" className="w-full sm:w-auto" />
-                <Button
+                <ScrollButton
                   size="lg"
                   variant="outline"
                   className="border-accent-foreground/20 hover:bg-accent-foreground/10 px-6 sm:px-8 bg-transparent w-full sm:w-auto"
+                  targetId="api-demo"
                 >
                   Schedule Demo
-                </Button>
+                </ScrollButton>
               </>
             )}
           </div>
