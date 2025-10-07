@@ -16,8 +16,17 @@ export function ApiDemo() {
     isValid: true,
     githubUrl: "https://github.com/langchain-ai/langchain",
     readmeData: {
-      content:
-        "# 🦜️🔗 LangChain\n\n⚡ Building applications with LLMs through composability ⚡\n\nLangChain is a framework for developing applications powered by language models. The platform for building reliable agents.\n\n## Quick Install\n\n```bash\npip install langchain\n```",
+      content: `# 🦜️🔗 LangChain
+
+⚡ Building applications with LLMs through composability ⚡
+
+LangChain is a framework for developing applications powered by language models. The platform for building reliable agents.
+
+## Quick Install
+
+\`\`\`bash
+pip install langchain
+\`\`\``,
     },
     stars: 94523,
     forks: 15234,
